@@ -1,5 +1,12 @@
 
-环境 `python3.6``qqbot``itchat``mongodb``selenium``chrome/phantomJS driver` 
+环境:
+
+`python3.6`  
+`qqbot`  
+`itchat`  
+`mongodb`  
+`selenium`  
+`chrome/phantomJS driver` 
 
 以下单独运行：
 
