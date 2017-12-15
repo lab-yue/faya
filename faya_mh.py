@@ -1,31 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import json
+import db
 
 def get_mh(order):
 
-    with open('mh.json', 'r', encoding='utf-8') as mh:
-        mon_dict = json.loads(mh.read())
+    mon_dict = db.name('mh').get()
 
     if order in mon_dict:
         return mon_dict[order]["info"]
     else:
+        alter_dict = db.name('mon_alter').get()
 
-        with open('mon_alter.json', 'r', encoding='utf-8') as mh:
-            alter_dict = json.loads(mh.read())
+        if order not in alter_dict:
 
-            if order not in alter_dict:
+            for each in mon_dict:
+                if order == mon_dict[each]["jp_name"]:
+                    return mon_dict[each]["info"]
 
-                for each in mon_dict:
-                    if order == mon_dict[each]["jp_name"]:
-                        return mon_dict[each]["info"]
+            return "大概没有？"
 
-                return "大概没有？"
-
-            else:
-                return mon_dict[alter_dict[order]]["info"]
-
+        else:
+            return mon_dict[alter_dict[order]]["info"]
 
 def mh_alter(order):
     if ':' not in order:
@@ -36,20 +32,17 @@ def mh_alter(order):
 
         print(ori,new)
 
-        with open('mh.json', 'r', encoding='utf-8') as mh:
-            mon_dict = json.loads(mh.read())
+        mon_dict = db.name('mh').get()
 
         if  ori not in mon_dict:
             return '大概mhxx没有？'
         else:
-            with open('mon_alter.json', 'r', encoding='utf-8') as mh:
-                alter_dict = json.loads(mh.read())
+            alter = db.name('mon_alter')
 
+            alter_dict = alter.get()
             alter_dict[new] = ori
+            alter.set(alter_dict)
 
-            with open('mon_alter.json', 'w') as outfile:
-               json.dump(alter_dict, outfile, ensure_ascii=False)
-               outfile.write('\n')
             return '存好新名字了'
 
 if __name__ == "__main__":

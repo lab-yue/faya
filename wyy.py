@@ -9,8 +9,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.by import By
-from pymongo import MongoClient
-
+import db
 
 def love(url, name):
     dcap = dict(DesiredCapabilities.PHANTOMJS)
@@ -31,11 +30,8 @@ def love(url, name):
 
     driver.delete_all_cookies()
 
-    client = MongoClient('localhost', 16376)
-    db = client.faya
-    a = db.wyy.find_one()
 
-    for each in a['cookies']:
+    for each in db.name('wyy').get_key('cookies'):
         driver.add_cookie(each)
 
     # for cookie in c:
@@ -70,7 +66,7 @@ def love(url, name):
 
         title = driver.title.replace(' - 网易云音乐', '').replace(' - 单曲', '')
 
-        if name == '主人':
+        if name == 'master':
             driver.find_element_by_xpath('//*[@id="content-operation"]/a[3]').click()
             print('click ok')
             WebDriverWait(driver, 5, 0.1).until(ec.presence_of_all_elements_located((By.CLASS_NAME, 'xtag ')))
@@ -141,5 +137,5 @@ def save_wyy(msg, nickname):
 
 if __name__ == "__main__":
     #print(give_wyy())
-    print(save_wyy('http://music.163.com/song/831736?userid=95742045','主人'))
+    print(save_wyy('http://music.163.com/#/m/song?id=29450668','master'))
     #print(give_wyyurl(1))

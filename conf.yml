@@ -1,0 +1,29 @@
+ver: 3.0.1
+master_qq: 
+nick_dict: ['', '', '', '', '', '', '', '']
+group_qq: 
+
+my_members:
+
+twitter:
+  OAuthHandler: ['', '']
+  access_token: ['', '']
+  follow: 
+    clavichordtra: 
+    everb1ue: 
+    Rellakinoko:  
+    ERIC_OwO: 
+
+line:
+  channel_secret: 
+  channel_access_token: 
+  master: 
+  push: 
+
+ox:
+ app_id: 
+ app_key: 
+
+yd: 
+  keyfrom: 
+  key: 

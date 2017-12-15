@@ -7,11 +7,15 @@ import os
 import _thread
 from Faya_fun import scenario
 import yaml
+import db
+
 
 with open('faya.yml', 'r') as yml:
     conf = yaml.load(yml)['wx']
 
-self, nickdict, savedict = conf['self'], conf['nickdict'], conf['savedict']
+self= conf['self']
+
+data = db.name('wx').get()
 
 
 @itchat.msg_register('Text')
@@ -31,16 +35,16 @@ def text_reply(msg):
         msg.user.send('尝试重启')
     '''
 
-    if from_buddy in nickdict:
+    if from_buddy in data:
 
-        nick = nickdict[from_buddy]
+        nick = data[from_buddy]['display']
 
-        save = savedict[from_buddy]
+        save = data[from_buddy]['short']
 
         with open('wx.txt', 'w') as last:
             last.write(save)
 
-        if nick == '潘':
+        if nick == 'dalao':
 
             try:
                 txt = scenario('tf', content, '')
@@ -68,8 +72,8 @@ def atta_reply(msg):
 
     wx_type = msg['Type']
 
-    if from_buddy in nickdict:
-        nick = nickdict[from_buddy]
+    if from_buddy in data:
+        nick = data[from_buddy]['display']
 
         wx_msg = f'有来自 {nick} 微信的{wx_type}消息'
 
@@ -89,4 +93,3 @@ while True:
     info = sock_receive(sock, addr).split('@@@')
     to_buddy = itchat.search_friends(nickName=info[0])[0]
     to_buddy.send(info[1])
-

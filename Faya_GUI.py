@@ -7,7 +7,6 @@ from PyQt5.QtWidgets import QLineEdit, QWidget, QPushButton, QApplication, QGrid
 from Faya_fun import scenario
 
 
-
 class Example(QWidget):
     def __init__(self):
         super().__init__()

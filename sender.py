@@ -2,17 +2,19 @@
 # -*- coding: utf-8 -*-
 
 from sock import *
+import db
 
 def send_wx(to_buddy_abb, msg):
 
-    nickdict = ''
+    wx = db.name('wx').search('short',to_buddy_abb)
 
-    if to_buddy_abb in nickdict:
-        to_buddy = nickdict[to_buddy_abb]
+    if wx:
+        #print(wx['wx'])
+        soc(wx['wx'] + '@@@' + msg, 'wx')
+
     else:
         return '联系人错误orz'
 
-    soc(to_buddy + '@@@' + msg, 'wx')
 
     return '发送成功'
 

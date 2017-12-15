@@ -13,23 +13,22 @@ import bilibili
 import currency
 import duilian
 import express
+import yaml
 from faya_mh import get_mh, mh_alter
 import ox
 import pi_status
-from pymongo import MongoClient
 import weather
 import yd
+import db
 from sender import send_wx
 from sock import *
-#from shine import get_shine
 # from wyy import give_wyy, save_wyy
-#from tempo.memo import take_memo, pop_memo
+# from tempo.memo import take_memo, pop_memo
 
 _registered_actions = {}
 
-client = MongoClient('localhost', 16376)
-db = client.faya
-a = db.wyy.find_one()
+faya_db = db.name('faya_dict')
+faya_db_b = db.name('faya_dict_b')
 
 
 def action(name):
@@ -38,15 +37,28 @@ def action(name):
         return f
     return decorator
 
+
+@action("faya")
+def faya(data):
+    if data == 'ver':
+        with open('faya.yml', 'r') as yml:
+            ver = yaml.load(yml)['ver']
+        return f'版本为 {ver}'
+    elif data == 'love':
+        return 'Love~'
+    elif not data:
+        reply = ['在', '你好呀', '( ´▽｀)']
+        return reply[random.randint(0, 2)]
+
 # learn
 
 
 @action("learn")
 def learn(data, nickname):
 
-    faya_dict = db.faya_dict.find_one()
+    faya_dict = faya_db.get()
 
-    if nickname != 'wy':
+    if nickname != 'master':
         return '目前只有wy有权限教我。'
     else:
         yltl = data.split(':', 1)
@@ -54,35 +66,38 @@ def learn(data, nickname):
             return 'wy你是蠢么'
         else:
             faya_dict[yltl[0]] = yltl[1]
-            db.faya_dict.save(faya_dict)
+            faya_db.set(faya_dict)
             return '学会了！(ง •̀_•́)ง '
+
 
 @action("us")
 def phon(data):
     return yd.get_phon(data, 'us')
 
+
 @action("uk")
 def phon(data):
     return yd.get_phon(data, 'uk')
 
-#@action("+")
-#def phon(data):
+# @action("+")
+# def phon(data):
 #    json_add('words.json', round(datetime.timestamp(datetime.now())), [data, 0])
 #    return f'已添加{data}'
+
 
 @action("unlearn")
 def popmark(data, nickname):
 
-    faya_dict = db.faya_dict.find_one()
+    faya_dict = faya_db.get()
 
-    if nickname != 'wy':
+    if nickname != 'master':
         return '目前只有wy有权限教我。'
     else:
         if data not in faya_dict:
             return 'wy你是蠢么'
         else:
             faya_dict.pop(data)
-            db.faya_dict.save(faya_dict)
+            faya_db.set(faya_dict)
             return '已忘记。'
 
 # blur learn
@@ -90,9 +105,9 @@ def popmark(data, nickname):
 
 @action("blearn")
 def learn(data, nickname):
-    faya_dict = db.faya_dict_b.find_one()
+    faya_dict = faya_db_b.get()
 
-    if nickname != 'wy':
+    if nickname != 'master':
         return '目前只有wy有权限教我。'
     else:
         yltl = data.split(':', 1)
@@ -100,22 +115,22 @@ def learn(data, nickname):
             return 'wy你是蠢么'
         else:
             faya_dict[yltl[0]] = yltl[1]
-            db.faya_dict_b.save(faya_dict)
+            faya_db_b.set(faya_dict)
             return '学会了！(ง •̀_•́)ง '
 
 
 @action("unblearn")
 def popmark(data, nickname):
-    blur = db.faya_dict_b.find_one()
+    blur = faya_db_b.get()
 
-    if nickname != 'wy':
+    if nickname != 'master':
         return '目前只有wy有权限教我。'
     else:
         if data not in blur:
             return 'wy你是蠢么'
         else:
             blur.pop(data)
-            db.faya_dict_b.save(blur)
+            faya_db_b.set(blur)
             return '已忘记。'
 
 # len
@@ -125,16 +140,17 @@ def popmark(data, nickname):
 def show_len(data):
     return str(len(data))
 
+
 @action("对联")
 def couplet(data):
     return duilian.duilian(data)
 
 # shijing
 
+
 @action("poem")
 def give_poem():
-    poems = db.sj.find_one()
-    poems.pop('_id')
+    poems = db.name('sj').get()
     poem = list(poems)[random.randint(0, len(poems)-1)]
     return poem + '\n' + poems[poem].replace('。', '。\n').replace('？', '？\n').replace('！', '！\n').replace('；', '；\n')
 
@@ -144,13 +160,6 @@ def give_poem():
 @action("pi_info")
 def pi():
     return pi_status.pi_info()
-
-
-# shine
-
-#@action("shine")
-#def shine():
-#    return get_shine()
 
 
 # calculator
@@ -165,14 +174,14 @@ def cal(data):
         else:
             try:
                 return '计算结果为:' + str(eval(data))
-            except:
+            except BaseException:
                 return '输入算式有误'
 
 # jp
 
 
 @action("?jp")
-def jp(data):
+def dummy(data):
     return web_jp.get_jp(data)
     # return '由于GFW日语字典暂时不能用'#get_jp(data)
 
@@ -185,14 +194,16 @@ def mark(data, nickname):
 
     to_mark = data.split(' ', 1)
 
-    marked_dict = db[nickname].find_one()
+    marked = db.name(nickname)
+
+    marked_dict = marked.get()
 
     if len(to_mark) == 2:
         if to_mark[0] != 'key':
 
             marked_dict[to_mark[0]] = to_mark[1]
 
-            db[nickname].save(marked_dict)
+            marked.set(marked_dict)
 
             return '记住了。' + to_mark[0] + ',' + to_mark[1]
 
@@ -212,11 +223,13 @@ def mark(data, nickname):
 @action("popmark")
 def popmark(data, nickname):
 
-    marked_dict = db[nickname].find_one()
+    marked = db.name(nickname)
+
+    marked_dict = marked.get()
 
     if data in marked_dict:
         marked_dict.pop(data)
-        db[nickname].save(marked_dict)
+        marked.set(marked_dict)
         return '已去除。'
     else:
         return '你还没使用此key'
@@ -227,8 +240,8 @@ def popmark(data, nickname):
 
 @action("roll")
 def roll_someting(data, nickname):
-    if (data == '吃啥') and (nickname == 'haru' or nickname == 'wy'):
-        rolled = db.r_mod.find_one()['data']
+    if (data == '吃啥') and (nickname == 'haru' or nickname == 'master'):
+        rolled = db.name('r_mod').get()
         rolled = rolled[random.randint(0, len(rolled) - 1)]
 
         reply = '随机推荐：\n' + rolled['name']
@@ -300,8 +313,8 @@ def pop_roll(data, nickname):
 
 
 @action("wx")
-def wx(data, nickname):
-    if nickname == 'wy':
+def dummy(data, nickname):
+    if nickname == 'master':
         try_wx = data.split('.', 1)
         if len(try_wx) == 2:
             return send_wx(try_wx[0], try_wx[1])
@@ -317,8 +330,9 @@ def wx(data, nickname):
         else:
             return 'wx格式有误'
 
+
 @action('qq')
-def qq(data, nickname):
+def dummy(data, nickname):
     app = sys.argv[0].split('/')[-1][0:-3]
     if app == 'qq':
         return '。。你为什么要这么做'
@@ -327,8 +341,9 @@ def qq(data, nickname):
         os.system(f'qq send group test群 {msg}')
         return 'faya已转发至群'
 
+
 @action('line')
-def qq(data, nickname):
+def dummy(data, nickname):
     app = sys.argv[0].split('/')[-1][0:-3]
     if app == 'line':
         return '。。你为什么要这么做'
@@ -368,7 +383,7 @@ def syn(data, nickname):
 
 @action("～")
 def wxrp(data, nickname):
-    if nickname == 'wy':
+    if nickname == 'master':
         with open('wx.txt', 'r') as last:
             lastest = last.read()
         return send_wx(lastest, data)
@@ -384,7 +399,7 @@ def aaa():
 
 
 @action("list")
-def bilibili(data):
+def get_bilibili(data):
     return bilibili.get_bilibili(data)
 
 # bilibili
@@ -398,8 +413,8 @@ def follow_bilibili(data):
 
 
 @action("aqi")
-def aqi(data):
-    print(data)
+def dummy(data):
+    print()
     if data == 0:
         return aqi.get_aqi()
     else:
@@ -416,16 +431,18 @@ def tq():
 
 
 @action("?")
-def ox(data):
-    return yd.get_ydword(data)
+def dummy(data):
+    if data:
+        return yd.get_ydword(data)
 
 
 # ox dict
 
 
 @action("?ox")
-def ox(data):
-    return ox.get_oxword(data)
+def dummy(data):
+    if data:
+        return ox.get_oxword(data)
 
 
 # currency
@@ -451,6 +468,7 @@ def mh(data):
     else:
         return '\n\n'.join(mh_data).strip()
 
+
 @action("alias")
 def alter(nickname, data):
     arg = data.split('=')
@@ -460,16 +478,25 @@ def alter(nickname, data):
         if arg[1] in _registered_actions:
             if arg[0] in _registered_actions:
                 return '会覆盖原有命令的说。还是算了吧'
-            a = db[nickname].find_one()
-            a[arg[0] + '_alt'] = arg[1]
-            db[nickname].save(a)
+
+            a = db.name(nickname)
+            b = a.get()
+            b[arg[0] + '_alt'] = arg[1]
+            a.set(b)
 
             return '知道了(~￣△￣)~'
         else:
             return f'faya没{arg[0]}命令'
 
+
+@action("update")
+def up():
+    msg = bilibili.get_pagelist()
+    return msg
+
+
 @action("快递")
-def express(data):
+def dummy(data):
     return express.get_express(data)
 
 
@@ -500,11 +527,10 @@ def simple_if(nickname, content):
 
     timer = timerOOP.timer()
 
-
-    if (nickname == 'wy') and (content == '1@3$5^7*9)'):
+    if (nickname == 'master') and (content == '1@3$5^7*9)'):
         faya_reply = '!2#4%6&8(0'
 
-    if content.find('https://minatsuki-yui.github.io/') >= 0 and nickname == 'wy':
+    if content.find('https://minatsuki-yui.github.io/') >= 0 and nickname == 'master':
         faya_reply = 'blog 更新了哦'
 
     if content.find("http") >= 0 and content.find("zhihu.com") >= 0:
@@ -552,41 +578,44 @@ def simple_if(nickname, content):
 
     if ('欧拉'in content) or ('無駄' in content):
         if not content.replace('欧拉', '').replace('無駄', ''):
-            ola_tmp = content.replace('欧拉','a')
-            muda_tmp = ola_tmp.replace('無駄','欧拉')
-            return muda_tmp.replace('a','無駄')
+            ola_tmp = content.replace('欧拉', 'a')
+            muda_tmp = ola_tmp.replace('無駄', '欧拉')
+            return muda_tmp.replace('a', '無駄')
 
     if faya_reply:
         return faya_reply
     else:
         return 0
 
+
 def scenario(nickname, content, contact):
 
     func_name, parameters = 0, 0
 
-    if '.' in content:
-        func_name, parameters = content.split('.', 1)
     if ' ' in content:
         func_name, parameters = content.split(' ', 1)
     else:
-        func_name = content
+        if '.' in content:
+            func_name, parameters = content.split('.', 1)
+        else:
+            func_name = content
 
-    alter_dict = db[nickname].find_one()
+    alter_dict = db.name(nickname).get()
 
-    if (func_name + '_alt') in alter_dict:
-        func_name = alter_dict[func_name + '_alt']
+    if alter_dict:
+        if (func_name + '_alt') in alter_dict:
+            func_name = alter_dict[func_name + '_alt']
 
     if func_name in _registered_actions:
 
         return do_action(func_name, parameters, nickname, contact)
 
-    faya_dict = db.faya_dict_b.find_one()
+    faya_dict = faya_db.get()
 
     if content in faya_dict:
         return faya_dict[content]
 
-    blur = db.faya_dict_b.find_one()
+    blur = faya_db_b.get()
 
     for key_word in blur:
         if key_word in content:
@@ -600,4 +629,4 @@ def scenario(nickname, content, contact):
         return 0
 
 if __name__ == "__main__":
-    print(scenario('xds', '欧拉欧拉無駄欧拉欧拉無駄欧拉無駄欧拉欧拉欧拉', 'somebody'))
+    print(scenario('master', 'wx wt', 'somebody'))

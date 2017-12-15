@@ -8,8 +8,9 @@ not
 
 private.py
 faya.yml
+test.py
 
 #sys:
 
 ghostdriver.log
-.idea
+.idea/

@@ -4,7 +4,7 @@ import time
 import requests
 import re
 import json
-from pymongo import MongoClient
+import db
 
 def add_bilibili(url):
     if 'anime/' in url:
@@ -36,13 +36,12 @@ def add_bilibili(url):
             }
             print(this_ani)
 
-            client = MongoClient('localhost', 16376)
-            db = client.faya
-            a = db.bili.find_one()
-            a[this_ani['day']+this_ani['hour']+this_ani['minute']] = this_ani
-            db.bili.save(a)
+            data = db.name('bili')
 
-            #json_add('bili.json',this_ani['day']+this_ani['hour']+this_ani['minute'] , this_ani)
+            a = data.get()
+            a[this_ani['day']+this_ani['hour']+this_ani['minute']] = this_ani
+            data.set(a)
+
             return f'已获取{title}信息、{update_time}'
         except TypeError:
             return '貌似url不合法，最后是数字么？或者遇到了蜜汁bug……'
@@ -59,6 +58,11 @@ def get_bilibili_api(av_id):
     }
     return json.loads(requests.get(parturl,headers = headers).text[19:-2])
 
+def get_pagelist(av_id=16983061):
+    headers = {'Origin': 'https://www.bilibili.com', 'Accept-Encoding': 'gzip, deflate, br', 'Accept-Language': 'zh-CN,zh;q=0.8,ja;q=0.6,en;q=0.4', 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36', 'Accept': 'application/json, text/javascript, */*; q=0.01', 'Referer': f'https://www.bilibili.com/video/av{av_id}/'}
+    now = requests.get(f'https://api.bilibili.com/x/player/pagelist?aid={av_id}&jsonp=jsonp',headers=headers).json()
+    return '现在更新到：' + now['data'][-1]['part']
+
 def get_bilibili(av_id):
     jsonp = get_bilibili_api(av_id)
     le = jsonp['result']['episodes'][0]
@@ -70,4 +74,4 @@ def get_bilibili(av_id):
         return msgbk
 
 if __name__=="__main__":
-    print(add_bilibili('https://bangumi.bilibili.com/anime/6446'))
+    print(get_pagelist())

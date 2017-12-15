@@ -9,15 +9,19 @@ from qqbot import QQBotSched as qqbotsched, RunBot
 import weather
 import bilibili
 import yaml
-from pymongo import MongoClient
-from aqi import get_aqi
+import aqi
 import wyy
 import Faya_fun
 import _thread
 import private
+import db
+
 
 @qqbotslot
 def onQQMessage(bot, contact, member, content):
+    global master_qq, nict_dict, group_qq, my_members
+
+    #print(master_qq, contact.qq)
 
     if bot.isMe(contact, member):
         return
@@ -28,9 +32,12 @@ def onQQMessage(bot, contact, member, content):
         else:
             nickname = '?'
     elif contact.qq == master_qq:
+        #print('master~')
         nickname = 'master'
     else:
         nickname = '?'
+
+    #print(nickname)
 
     '''
     if nickname in nick_dict:
@@ -43,12 +50,6 @@ def onQQMessage(bot, contact, member, content):
     '''
 
     faya_reply = Faya_fun.scenario(nickname, content, contact)
-
-
-
-
-    last_post_time = 0
-    last_reply = ''
 
     global last_post_time, last_reply
 
@@ -64,15 +65,14 @@ def onQQMessage(bot, contact, member, content):
         with open('log.txt', 'a+') as log:
             log.write(content.replace('\n', '')+'\n')
 
-    eval(private.code())
-
+    private.code(nickname, content, contact, bot)
 
     if content.find("http://music.163.com/") >= 0:
         bot.SendTo(contact, '尝试收藏')
         _thread.start_new_thread(wait_wyy, (bot, contact, content, nickname,))
 
-        #wyylink = give_wyy()
-        #return '尝试收藏' #save_wyy(content, nickname)+'\n\n'+wyylink
+    # wyylink = give_wyy()
+    # return '尝试收藏' #save_wyy(content, nickname)+'\n\n'+wyylink
 
     if content.startswith('alarm'):
         al = content.split(' ')
@@ -81,11 +81,12 @@ def onQQMessage(bot, contact, member, content):
             try:
                 wait = float(al[1])
                 if len(al) == 2:
-                    _thread.start_new_thread(alarm,(bot, contact, nickname, wait,))
+                    _thread.start_new_thread(alarm, (bot, contact, nickname, wait,))
                 else:
-                    _thread.start_new_thread(alarm,(bot, contact, nickname, wait, al[2]))
+                    _thread.start_new_thread(alarm, (bot, contact, nickname, wait, al[2]))
             except TypeError:
                 bot.SendTo(contact, '时间不对')
+
 
 def wait_wyy(bot, contact, content, nickname):
     driver = wyy.save_wyy(content, nickname)
@@ -93,15 +94,14 @@ def wait_wyy(bot, contact, content, nickname):
     return 0
 
 
-def alarm(bot, contact, nick, min ,msg=''):
+def alarm(bot, contact, nick, minute, msg=''):
     bot.SendTo(contact, '好的')
-    time.sleep(60*min)
+    time.sleep(60*minute)
     if msg:
-        bot.SendTo(contact,nick + ' 提醒时间到了\n'+msg)
+        bot.SendTo(contact, nick + ' 提醒时间到了\n'+msg)
     else:
         bot.SendTo(contact, nick + ' 提醒时间到了')
     return 0
-
 
 
 '''
@@ -122,7 +122,8 @@ def onExit(bot, code, reason, error):
                 time.sleep(60)
 '''
 
-@qqbotsched(hour='0,1,6,11', minute='00') #18,20,22,23
+
+@qqbotsched(hour='0,1,6,11', minute='00')   # 18,20,22,23
 def clock(bot):
     nowhour = datetime.now().hour
     gl = bot.List('group', 'qq=478475973')
@@ -137,12 +138,11 @@ def clock(bot):
                 tenki = weather.get_weather()
                 bot.SendTo(group, tenki)
 
-                kqzl = get_aqi()
+                kqzl = aqi.get_aqi()
                 bot.SendTo(group, kqzl)
 
             if nowhour == 11:
                 trd += '\n中午了呢'
-
 
             if nowhour == 0:
                 trd += '\n什么都不想说了。。'
@@ -150,11 +150,10 @@ def clock(bot):
             if not kqzl:
                 bot.SendTo(group, trd)
 
-conn = MongoClient('localhost', 16376)
-ani_post = conn.faya.bili.find_one()
-ani_post.pop('_id')
 
-days, hours, minutes =[],[],[]
+ani_post = db.name('bili').get()
+
+days, hours, minutes = [], [], []
 
 for each in ani_post:
     if ani_post[each]['day'] not in days:
@@ -163,6 +162,7 @@ for each in ani_post:
         hours.append(ani_post[each]['hour'])
     if ani_post[each]['minute'] not in minutes:
         minutes.append(ani_post[each]['minute'])
+
 
 @qqbotsched(day_of_week=','.join(days), hour=','.join(hours), minute=','.join(minutes))
 def anime(bot):
@@ -183,12 +183,15 @@ if __name__ == "__main__":
         conf = yaml.load(yml)
         try:
             master_qq = conf['master_qq']
-            nict_dict = conf['nict_dict']
+            nict_dict = conf['nick_dict']
             group_qq = conf['group_qq']
             my_members = conf['my_members']
 
-            global master_qq, nict_dict, group_qq, my_members
-        except KeyError:
-            print('配置文件有误')
+            last_post_time = 0
+            last_reply = ''
 
-    RunBot()
+            RunBot()
+
+        except KeyError:
+            # raise
+            print('配置文件有误')
