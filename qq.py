@@ -27,8 +27,8 @@ def onQQMessage(bot, contact, member, content):
         return
 
     if member:
-        if member.qq in my_members:
-            nickname = my_members[member.qq]
+        if int(member.qq) in my_members:
+            nickname = my_members[int(member.qq)]
         else:
             nickname = '?'
     elif contact.qq == master_qq:
@@ -54,18 +54,23 @@ def onQQMessage(bot, contact, member, content):
     global last_post_time, last_reply
 
     if faya_reply:
-        if last_reply != faya_reply:
+        if last_reply == faya_reply:
             if time.time() - last_post_time > 20:
                 bot.SendTo(contact, faya_reply)
 
                 last_post_time = time.time()
                 last_reply = faya_reply
+        else:
+            bot.SendTo(contact, faya_reply)
+
+            last_post_time = time.time()
+            last_reply = faya_reply
 
     if member and not faya_reply:
         with open('log.txt', 'a+') as log:
             log.write(content.replace('\n', '')+'\n')
 
-    private.code(nickname, content, contact, bot)
+    private.run(nickname, content, contact, bot)
 
     if content.find("http://music.163.com/") >= 0:
         bot.SendTo(contact, '尝试收藏')
@@ -123,7 +128,7 @@ def onExit(bot, code, reason, error):
 '''
 
 
-@qqbotsched(hour='0,1,6,11', minute='00')   # 18,20,22,23
+@qqbotsched(hour='0,1,6,11,20', minute='00')   # 18,20,22,23
 def clock(bot):
     nowhour = datetime.now().hour
     gl = bot.List('group', 'qq=478475973')
@@ -143,6 +148,17 @@ def clock(bot):
 
             if nowhour == 11:
                 trd += '\n中午了呢'
+
+            if nowhour == 20:
+                oral = db.name('oral')
+                oral_db = oral.get()
+
+                day_key = list(oral.get())[0]
+                push = '今日口语: ' + day_key +'\n' + oral_db[day_key]
+                oral_db.pop(day_key)
+                oral.set(oral_db)
+
+                bot.SendTo(group, push)
 
             if nowhour == 0:
                 trd += '\n什么都不想说了。。'
@@ -168,7 +184,8 @@ for each in ani_post:
 def anime(bot):
     now = datetime.now()
     weekday = datetime.weekday(datetime.now())
-    gl = bot.List('group', 'qq=478475973')
+    global group_qq
+    gl = bot.List('group', 'qq=' + group_qq)
     if gl is not None:
         for group in gl:
             key = str(weekday)+str(now.hour)+str(now.minute)

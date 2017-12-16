@@ -20,6 +20,7 @@ import pi_status
 import weather
 import yd
 import db
+import rss
 from sender import send_wx
 from sock import *
 # from wyy import give_wyy, save_wyy
@@ -78,6 +79,10 @@ def phon(data):
 @action("uk")
 def phon(data):
     return yd.get_phon(data, 'uk')
+
+@action("rss")
+def dummy():
+    return rss.check()
 
 # @action("+")
 # def phon(data):
@@ -390,7 +395,7 @@ def wxrp(data, nickname):
 
 
 @action("~?")
-def aaa():
+def dummy():
     with open('wx.txt', 'r') as last:
             lastest = last.read()
     return f'~ 对象为 {lastest}'
@@ -408,6 +413,12 @@ def get_bilibili(data):
 @action("follow")
 def follow_bilibili(data):
     return bilibili.add_bilibili(data)
+
+
+@action("update")
+def up():
+    msg = bilibili.get_pagelist()
+    return msg
 
 # aqi
 
@@ -487,12 +498,6 @@ def alter(nickname, data):
             return '知道了(~￣△￣)~'
         else:
             return f'faya没{arg[0]}命令'
-
-
-@action("update")
-def up():
-    msg = bilibili.get_pagelist()
-    return msg
 
 
 @action("快递")
@@ -629,4 +634,4 @@ def scenario(nickname, content, contact):
         return 0
 
 if __name__ == "__main__":
-    print(scenario('master', 'wx wt', 'somebody'))
+    print(scenario('haru', 'roll', 'somebody'))
