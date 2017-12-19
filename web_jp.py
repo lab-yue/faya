@@ -3,7 +3,6 @@
 
 import requests
 import re
-import sys
 
 
 def get_jp(word):

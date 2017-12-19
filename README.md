@@ -3,10 +3,10 @@
 
 `python3.6`  
 `qqbot`  
-`itchat`  
-`mongodb`  
-`selenium`  
-`chrome/phantomJS driver` 
+`itchat` 
+`selenium`    
+`chrome/phantomJS driver`  
+`lxml` 
 
 以下单独运行：
 
@@ -40,4 +40,4 @@
 | wyy      | 自动收藏歌曲到网易云歌单 | http://music.163.com/#/m/song?id=455502617 |先正则匹配url，再使用selenium操作 速度较慢 需要提前获取登录用cookies |
 | yd      | 查询有道字典 | ? apple | 需要先注册获取使用key|
 | yd      | 查询有道字典读音 | en/us apple is sweet | 需要先注册获取使用key|
-
+| wiki      | 获取wiki第一段 自动选择语言 | wiki Tokyo 7th シスター | |

@@ -190,6 +190,14 @@ def dummy(data):
     return web_jp.get_jp(data)
     # return '由于GFW日语字典暂时不能用'#get_jp(data)
 
+@action("wiki")
+def dummy(data):
+    if data:
+        wiki_key =  data.replace(' ','_')
+        return os.popen(f'sudo proxychains4 python3.6 wiki.py {wiki_key}').read()
+
+    # return '由于GFW日语字典暂时不能用'#get_jp(data)
+
 
 # mark
 
