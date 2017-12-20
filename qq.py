@@ -15,6 +15,7 @@ import Faya_fun
 import _thread
 import private
 import db
+import random
 
 
 @qqbotslot
@@ -128,7 +129,7 @@ def onExit(bot, code, reason, error):
 '''
 
 
-@qqbotsched(hour='0,1,6,11,20', minute='00')   # 18,20,22,23
+@qqbotsched(hour='0,1,6,8,11,20', minute='00')   # 18,20,22,23
 def clock(bot):
     nowhour = datetime.now().hour
     gl = bot.List('group', 'qq=478475973')
@@ -145,6 +146,18 @@ def clock(bot):
 
                 kqzl = aqi.get_aqi()
                 bot.SendTo(group, kqzl)
+
+            if nowhour == 8:
+                red = db.name('red')
+                red_db = red.get()
+                red_key = list(red_db)[red_db['now']]
+
+                push = '今日毛泽东语录: \n\n' + red_db[red_key]['p']
+                if red_db[red_key]['from']:
+                    push += '\n   -' + red_db[red_key]['from']
+                red_db['now'] += 1
+                red.set(red_db)
+                bot.SendTo(group, push)
 
             if nowhour == 11:
                 trd += '\n中午了呢'

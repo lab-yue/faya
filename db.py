@@ -12,7 +12,7 @@ class name(object):
             self.path = self.dir+filename+'.json'
 
         try:
-            with open(self.path ,'r') as data:
+            with open(self.path ,'r',encoding='utf-8') as data:
                 self.data =  json.loads(data.read())
         except:
             self.data = {'0':'0'}
@@ -24,7 +24,7 @@ class name(object):
     def set(self,data):
         if isinstance(data,dict):
             with open(self.path, 'w') as file:
-                json.dump(data,file)
+                json.dump(data,file,ensure_ascii=False)
 
     def get_key(self,key):
         if key in self.data:

@@ -21,6 +21,7 @@ import weather
 import yd
 import db
 import rss
+import subprocess
 from sender import send_wx
 from sock import *
 # from wyy import give_wyy, save_wyy
@@ -159,6 +160,18 @@ def give_poem():
     poem = list(poems)[random.randint(0, len(poems)-1)]
     return poem + '\n' + poems[poem].replace('。', '。\n').replace('？', '？\n').replace('！', '！\n').replace('；', '；\n')
 
+@action("mzd")
+def dummy():
+    red = db.name('red').get()
+    red.pop('now')
+    red_key = list(red)[random.randint(0, len(red)-1)]
+    push = '毛泽东语录: \n\n' + red[red_key]['p']
+    if red[red_key]['from']:
+        push += '\n   -' + red[red_key]['from']
+
+    return push
+
+
 # dict
 
 
@@ -193,8 +206,10 @@ def dummy(data):
 @action("wiki")
 def dummy(data):
     if data:
-        wiki_key =  data.replace(' ','_')
-        return os.popen(f'sudo proxychains4 python3.6 wiki.py {wiki_key}').read()
+        wiki_key = data.replace(' ', '_')
+        s =  subprocess.Popen(f'sudo proxychains4 python3.6 wiki.py {wiki_key}',stdout=subprocess.PIPE, close_fds=True)
+        stdoutdata, stderrdata = s.communicate()
+        return stdoutdata
 
     # return '由于GFW日语字典暂时不能用'#get_jp(data)
 
