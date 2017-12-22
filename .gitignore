@@ -9,8 +9,11 @@ not
 private.py
 faya.yml
 test.py
+push.py
+Fconf.py
 
 #sys:
 
 ghostdriver.log
-.idea/
+.idea
+__pycache__

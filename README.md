@@ -1,3 +1,4 @@
+当前版本: 3.0.3 ♪
 
 环境:
 
@@ -41,3 +42,6 @@
 | yd      | 查询有道字典 | ? apple | 需要先注册获取使用key|
 | yd      | 查询有道字典读音 | en/us apple is sweet | 需要先注册获取使用key|
 | wiki      | 获取wiki第一段 自动选择语言 | wiki Tokyo 7th シスター | |
+
+以往更新：
+[before.md]()
