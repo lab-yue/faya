@@ -17,8 +17,6 @@ class Pusher(object):
 
     def push(self):
 
-        print(1)
-
         self.update_md()
         self.update_yml()
 
@@ -36,6 +34,7 @@ class Pusher(object):
             sys.exit()
 
         update = datetime.now()
+
         print('Success.  ' + str(update))
         print('faya ver: %s --> %s' % (self.old_ver, self.new_ver))
 

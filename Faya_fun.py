@@ -21,6 +21,7 @@ import weather
 import yd
 import db
 import rss
+import synonym
 import subprocess
 from sender import send_wx
 from sock import *
@@ -477,6 +478,11 @@ def dummy(data):
 def dummy(data):
     if data:
         return ox.get_oxword(data)
+
+@action("snm")
+def dummy(data):
+    if data:
+        return synonym.find(data)
 
 
 # currency

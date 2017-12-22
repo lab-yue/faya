@@ -1,4 +1,4 @@
-当前版本: 3.0.4 ♪
+当前版本: 3.0.5 ♪
 
 环境:
 
@@ -44,4 +44,4 @@
 | wiki      | 获取wiki第一段 自动选择语言 | wiki Tokyo 7th シスター | |
 
 以往更新：
-[before.md]()
+[before.md](https://github.com/minatsuki-yui/faya/blob/master/before.md)
