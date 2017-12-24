@@ -25,7 +25,7 @@ class Pusher(object):
             self.update_yml()
         else:
             self.__new_ver = self.__old_ver
-            print('ver remain %s' % self.__old_ver)
+            print('ver remains %s' % self.__old_ver)
 
         os.system('git add .')
 
