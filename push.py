@@ -13,12 +13,18 @@ class Pusher(object):
             self.__config = yaml.load(yml)
 
         self.__old_ver = self.__config['ver']
-        self.__new_ver = '.'.join(str(int(self.__old_ver.replace('.', '')) + 1))
+        self.__new_ver = ''
 
     def push(self):
 
-        self.update_md()
-        self.update_yml()
+        update_ver = input('uodate ver? enter y to continue: ')
+
+        if update_ver.lower() == 'y':
+            self.__new_ver = '.'.join(str(int(self.__old_ver.replace('.', '')) + 1))
+            self.update_md()
+            self.update_yml()
+        else:
+            print('ver remain %s' % self.__old_ver)
 
         os.system('git add .')
 
