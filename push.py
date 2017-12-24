@@ -10,10 +10,10 @@ class Pusher(object):
     def __init__(self):
 
         with open('faya.yml', 'r') as yml:
-            self.config = yaml.load(yml)
+            self.__config = yaml.load(yml)
 
-        self.old_ver = self.config['ver']
-        self.new_ver = '.'.join(str(int(self.old_ver.replace('.', '')) + 1))
+        self.__old_ver = self.__config['ver']
+        self.__new_ver = '.'.join(str(int(self.__old_ver.replace('.', '')) + 1))
 
     def push(self):
 
@@ -36,14 +36,14 @@ class Pusher(object):
         update = datetime.now()
 
         print('Success.  ' + str(update))
-        print('faya ver: %s --> %s' % (self.old_ver, self.new_ver))
+        print('faya ver: %s --> %s' % (self.__old_ver, self.__new_ver))
 
     def update_yml(self):
 
-        self.config['ver'] = self.new_ver
+        self.__config['ver'] = self.__new_ver
 
         with open('faya.yml', 'w') as yml:
-            yaml.dump(self.config, yml, default_flow_style=False)
+            yaml.dump(self.__config, yml, default_flow_style=False)
 
     def update_md(self):
 
@@ -52,7 +52,7 @@ class Pusher(object):
         with open('README.md', 'r') as md:
             readme = md.read()
 
-        ver_info = '当前版本: '+self.new_ver+' ♪'
+        ver_info = '当前版本: '+self.__new_ver+' ♪'
 
         new_readme = re.sub(ver_reg, ver_info, readme)
 

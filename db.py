@@ -2,44 +2,46 @@
 
 import json
 
+
 class name(object):
-    def __init__(self,filename):
-        self.dir = 'data/'
+    def __init__(self, filename):
+        self.__dir = 'data/'
 
         if filename.endswith('.json'):
-            self.path = self.dir+filename
+            self.__path = self.__dir+filename
         else:
-            self.path = self.dir+filename+'.json'
+            self.__path = self.__dir+filename+'.json'
 
         try:
-            with open(self.path ,'r',encoding='utf-8') as data:
-                self.data =  json.loads(data.read())
+            with open(self.__path, 'r', encoding='utf-8') as dbs:
+                self.__data = json.loads(dbs.read())
         except:
-            self.data = {'0':'0'}
+            self.__data = {}
 
     def get(self):
-        if self.data:
-            return self.data
+        if self.__data:
+            return self.__data
 
-    def set(self,data):
-        if isinstance(data,dict):
-            with open(self.path, 'w') as file:
-                json.dump(data,file,ensure_ascii=False)
+    def set(self, new_data):
+        if isinstance(data, dict):
+            with open(self.__path, 'w') as file:
+                json.dump(new_data, file, ensure_ascii=False)
 
-    def get_key(self,key):
-        if key in self.data:
-            return self.data[key]
-    def set_key(self,key,value):
-        self.data[key] = value
+    def get_key(self, key):
+        if key in self.__data:
+            return self.__data[key]
 
-    def search(self,key,value):
-        for each in self.data:
-            this = self.data[each]
+    def set_key(self, key, value):
+        self.__data[key] = value
+
+    def search(self, key, value):
+        for each in self.__data:
+            this = self.__data[each]
             if key in this:
                 if value == this[key]:
-                    return self.data[each]
+                    return self.__data[each]
         return 0
 
 if __name__ == '__main__':
-    data = name('wx').search('display','dalao')
+    data = name('wx').search('display', 'dalao')
     print(data)

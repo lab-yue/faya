@@ -4,7 +4,7 @@
 import socket
 import time
 
-def soc(msg, app):
+def send(msg, app):
     ports= {'line':9998,'wx': 9999}
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect(('127.0.0.1', ports[app]))

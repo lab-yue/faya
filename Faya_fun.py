@@ -2,29 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import inspect
-import random
-import sys
-import os
-import timerOOP
-import re
-import web_jp
-import aqi
-import bilibili
-import currency
-import duilian
-import express
-import yaml
-from faya_mh import get_mh, mh_alter
-import ox
-import pi_status
-import weather
-import yd
 import db
-import rss
-import synonym
-import subprocess
-from sender import send_wx
-from sock import *
+import yaml
+import os
+import re
+import aqi
+import random
+
 # from wyy import give_wyy, save_wyy
 # from tempo.memo import take_memo, pop_memo
 
@@ -72,6 +56,7 @@ def learn(data, nickname):
             faya_db.set(faya_dict)
             return '学会了！(ง •̀_•́)ง '
 
+import yd
 
 @action("us")
 def phon(data):
@@ -82,8 +67,15 @@ def phon(data):
 def phon(data):
     return yd.get_phon(data, 'uk')
 
+
+@action("?")
+def dummy(data):
+    if data:
+        return yd.get_ydword(data)
+
 @action("rss")
 def dummy():
+    import rss
     return rss.check()
 
 # @action("+")
@@ -150,6 +142,7 @@ def show_len(data):
 
 @action("对联")
 def couplet(data):
+    import duilian
     return duilian.duilian(data)
 
 # shijing
@@ -178,6 +171,7 @@ def dummy():
 
 @action("pi_info")
 def pi():
+    import pi_status
     return pi_status.pi_info()
 
 
@@ -201,12 +195,14 @@ def cal(data):
 
 @action("?jp")
 def dummy(data):
+    import web_jp
     return web_jp.get_jp(data)
     # return '由于GFW日语字典暂时不能用'#get_jp(data)
 
 @action("wiki")
 def dummy(data):
     if data:
+        import subprocess
         wiki_key = data.replace(' ', '_')
         s =  subprocess.Popen(f'sudo proxychains4 python3.6 wiki.py {wiki_key}',stdout=subprocess.PIPE, close_fds=True)
         stdoutdata, stderrdata = s.communicate()
@@ -343,21 +339,24 @@ def pop_roll(data, nickname):
 
 @action("wx")
 def dummy(data, nickname):
+    import sender
     if nickname == 'master':
         try_wx = data.split('.', 1)
         if len(try_wx) == 2:
-            return send_wx(try_wx[0], try_wx[1])
+            return sender.send_wx(try_wx[0], try_wx[1])
         else:
             return 'wx格式有误'
     elif nickname == 'haru':
         try_wx = data.split('.', 1)
         if len(try_wx) == 2:
             if try_wx[0] == 'tf':
-                return send_wx(try_wx[0], 'from haru: ' + try_wx[1])
+                return sender.send_wx(try_wx[0], 'from haru: ' + try_wx[1])
             else:
                 return '暂时不能发别人'
         else:
             return 'wx格式有误'
+
+import sys
 
 
 @action('qq')
@@ -373,12 +372,13 @@ def dummy(data, nickname):
 
 @action('line')
 def dummy(data, nickname):
+    import sock
     app = sys.argv[0].split('/')[-1][0:-3]
     if app == 'line':
         return '。。你为什么要这么做'
     else:
         msg = f'from {nickname} {app}：{data}'
-        soc(msg, 'line')
+        sock.send(msg, 'line')
         return 'faya已转发至line'
 
 # ～
@@ -412,10 +412,11 @@ def syn(data, nickname):
 
 @action("～")
 def wxrp(data, nickname):
+    import sender
     if nickname == 'master':
         with open('wx.txt', 'r') as last:
             lastest = last.read()
-        return send_wx(lastest, data)
+        return sender.send_wx(lastest, data)
 
 
 @action("~?")
@@ -425,7 +426,7 @@ def dummy():
     return f'~ 对象为 {lastest}'
 
 # bilibili
-
+import bilibili
 
 @action("list")
 def get_bilibili(data):
@@ -457,18 +458,12 @@ def dummy(data):
 
 
 # weather
+import weather
 
 @action("tq")
 def tq():
     return weather.get_weather()
 
-# yd dict
-
-
-@action("?")
-def dummy(data):
-    if data:
-        return yd.get_ydword(data)
 
 
 # ox dict
@@ -477,11 +472,13 @@ def dummy(data):
 @action("?ox")
 def dummy(data):
     if data:
+        import ox
         return ox.get_oxword(data)
 
 @action("snm")
 def dummy(data):
     if data:
+        import synonym
         return synonym.find(data)
 
 
@@ -489,19 +486,22 @@ def dummy(data):
 
 @action("xr")
 def xr(data):
+    import currency
     return currency.exchange(data)
 
 # mh
 
+import faya_mh
+
 
 @action("alter")
 def alter(data):
-    return mh_alter(data)
+    return faya_mh.mh_alter(data)
 
 
 @action("?mh")
 def mh(data):
-    mh_data = get_mh(data)
+    mh_data = faya_mh.get_mh(data)
 
     if type(mh_data) == str:
         return mh_data
@@ -531,6 +531,7 @@ def alter(nickname, data):
 
 @action("快递")
 def dummy(data):
+    import express
     return express.get_express(data)
 
 
@@ -558,6 +559,8 @@ def do_action(action_name, data, nickname, contact):
 def simple_if(nickname, content):
 
     faya_reply = 0
+
+    import timerOOP
 
     timer = timerOOP.timer()
 
