@@ -3,11 +3,11 @@
 
 import inspect
 import db
-import yaml
 import os
 import re
 import aqi
 import random
+from Fconf import fconf
 
 # from wyy import give_wyy, save_wyy
 # from tempo.memo import take_memo, pop_memo
@@ -28,8 +28,7 @@ def action(name):
 @action("faya")
 def faya(data):
     if data == 'ver':
-        with open('faya.yml', 'r') as yml:
-            ver = yaml.load(yml)['ver']
+        ver = fconf.ver
         return f'版本为 {ver}'
     elif data == 'love':
         return 'Love~'
@@ -202,11 +201,12 @@ def dummy(data):
 @action("wiki")
 def dummy(data):
     if data:
-        import subprocess
+        # import subprocess
         wiki_key = data.replace(' ', '_')
-        s =  subprocess.Popen(f'sudo proxychains4 python3.6 wiki.py {wiki_key}',stdout=subprocess.PIPE, close_fds=True)
-        stdoutdata, stderrdata = s.communicate()
-        return stdoutdata
+        # s =  subprocess.Popen(f'sudo proxychains4 python3.6 wiki.py {wiki_key}',stdout=subprocess.PIPE, close_fds=True)
+        # stdoutdata, stderrdata = s.communicate()
+        import la_eric
+        return la_eric.get('?key='+wiki_key)
 
     # return '由于GFW日语字典暂时不能用'#get_jp(data)
 
@@ -666,4 +666,4 @@ def scenario(nickname, content, contact):
         return 0
 
 if __name__ == "__main__":
-    print(scenario('haru', 'roll', 'somebody'))
+    print(scenario('haru', 'wiki American', 'somebody'))

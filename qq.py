@@ -8,21 +8,20 @@ from qqbot import QQBotSlot as qqbotslot
 from qqbot import QQBotSched as qqbotsched, RunBot
 import weather
 import bilibili
-import yaml
+from Fconf import fconf
 import aqi
 import wyy
 import Faya_fun
 import _thread
 import private
 import db
-import random
 
 
 @qqbotslot
 def onQQMessage(bot, contact, member, content):
     global master_qq, nict_dict, group_qq, my_members
 
-    #print(master_qq, contact.qq)
+    # print(master_qq, contact.qq)
 
     if bot.isMe(contact, member):
         return
@@ -33,12 +32,12 @@ def onQQMessage(bot, contact, member, content):
         else:
             nickname = '?'
     elif contact.qq == master_qq:
-        #print('master~')
+        # print('master~')
         nickname = 'master'
     else:
         nickname = '?'
 
-    #print(nickname)
+    # print(nickname)
 
     '''
     if nickname in nick_dict:
@@ -156,7 +155,7 @@ def clock(bot):
                 oral_db = oral.get()
 
                 day_key = list(oral.get())[0]
-                push = '今日口语: ' + day_key +'\n' + oral_db[day_key]
+                push = '今日口语: ' + day_key + '\n' + oral_db[day_key]
                 oral_db.pop(day_key)
                 oral.set(oral_db)
 
@@ -198,13 +197,12 @@ def anime(bot):
 
 
 if __name__ == "__main__":
-    with open('faya.yml', 'r') as yml:
-        conf = yaml.load(yml)
+
         try:
-            master_qq = conf['master_qq']
-            nict_dict = conf['nick_dict']
-            group_qq = conf['group_qq']
-            my_members = conf['my_members']
+            master_qq = fconf.master_qq
+            nict_dict = fconf.nick_dict
+            group_qq = fconf.group_qq
+            my_members = fconf.my_members
 
             last_post_time = 0
             last_reply = ''
