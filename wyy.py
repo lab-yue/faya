@@ -14,7 +14,7 @@ import db
 def love(url, name):
     dcap = dict(DesiredCapabilities.PHANTOMJS)
     dcap["phantomjs.page.settings.userAgent"] = (
-        'user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36"'
+         'user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36"'
     )
 
     service_args = ['--load-images=no', '--disk-cache=yes', '--ignore-ssl-errors=true']
@@ -29,6 +29,11 @@ def love(url, name):
     driver.get("http://music.163.com/")
 
     driver.delete_all_cookies()
+
+    #input()
+
+    #c = driver.get_cookies()
+    #print(c)
 
 
     for each in db.name('wyy').get_key('cookies'):
@@ -78,6 +83,7 @@ def love(url, name):
         print('finished ' + title)
         return f'{title}:\n{sysmsg}'
     except Exception as e:
+        driver.get_screenshot_as_file('1.png')
         info = driver.find_elements_by_xpath('//div[@class="zcnt"]/div/div')
         if len(info):
             return '收藏不了的说...原因:\n'+info[0].text
@@ -137,5 +143,5 @@ def save_wyy(msg, nickname):
 
 if __name__ == "__main__":
     #print(give_wyy())
-    print(save_wyy('http://music.163.com/#/m/song?id=29450668','master'))
+    print(save_wyy('http://music.163.com/#/m/song?id=756137','master'))
     #print(give_wyyurl(1))

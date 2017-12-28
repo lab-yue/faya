@@ -210,7 +210,11 @@ def dummy(data):
 
     # return '由于GFW日语字典暂时不能用'#get_jp(data)
 
-
+@action("md5")
+def dummy(data):
+    if data:
+        import enc
+        return enc.Cipher().get_md5(data)
 # mark
 
 

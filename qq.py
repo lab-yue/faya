@@ -172,28 +172,28 @@ ani_post = db.name('bili').get()
 
 days, hours, minutes = [], [], []
 
-for each in ani_post:
-    if ani_post[each]['day'] not in days:
-        days.append(ani_post[each]['day'])
-    if ani_post[each]['hour'] not in hours:
-        hours.append(ani_post[each]['hour'])
-    if ani_post[each]['minute'] not in minutes:
-        minutes.append(ani_post[each]['minute'])
+if ani_post:
+    for each in ani_post:
+        if ani_post[each]['day'] not in days:
+            days.append(ani_post[each]['day'])
+        if ani_post[each]['hour'] not in hours:
+            hours.append(ani_post[each]['hour'])
+        if ani_post[each]['minute'] not in minutes:
+            minutes.append(ani_post[each]['minute'])
 
-
-@qqbotsched(day_of_week=','.join(days), hour=','.join(hours), minute=','.join(minutes))
-def anime(bot):
-    now = datetime.now()
-    weekday = datetime.weekday(datetime.now())
-    global group_qq
-    gl = bot.List('group', 'qq=' + group_qq)
-    if gl is not None:
-        for group in gl:
-            key = str(weekday)+str(now.hour)+str(now.minute)
-            if key in ani_post:
-                info = ani_post[key]['title']
-                info = info + '\n' + bilibili.get_bilibili(ani_post[key]['av_id'])
-                bot.SendTo(group, info)
+    @qqbotsched(day_of_week=','.join(days), hour=','.join(hours), minute=','.join(minutes))
+    def anime(bot):
+        now = datetime.now()
+        weekday = datetime.weekday(datetime.now())
+        global group_qq
+        gl = bot.List('group', 'qq=' + group_qq)
+        if gl is not None:
+            for group in gl:
+                key = str(weekday) + str(now.hour) + str(now.minute)
+                if key in ani_post:
+                    info = ani_post[key]['title']
+                    info = info + '\n' + bilibili.get_bilibili(ani_post[key]['av_id'])
+                    bot.SendTo(group, info)
 
 
 if __name__ == "__main__":
