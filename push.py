@@ -17,7 +17,7 @@ class Pusher(object):
 
     def push(self):
 
-        update_ver = input('uodate ver? enter y to continue: ')
+        update_ver = input('update ver? enter y to continue: ')
 
         if update_ver.lower() == 'y':
             self.__new_ver = '.'.join(str(int(self.__old_ver.replace('.', '')) + 1))

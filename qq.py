@@ -19,19 +19,26 @@ import db
 
 @qqbotslot
 def onQQMessage(bot, contact, member, content):
-    global master_qq, nict_dict, group_qq, my_members
+    global master_qq_name, nict_dict, group_name, my_members_name
 
     # print(master_qq, contact.qq)
 
     if bot.isMe(contact, member):
         return
 
+    nickname = '?'
+
     if member:
-        if int(member.qq) in my_members:
-            nickname = my_members[int(member.qq)]
-        else:
-            nickname = '?'
-    elif contact.qq == master_qq:
+        #if int(member.qq) in my_members:
+        #    nickname = my_members[int(member.qq)]
+        #else:
+        #    nickname = '?'
+        for each in my_members_name:
+            if each in member.nick:
+                nickname = my_members_name[each]
+            #else:
+            #    nickname = '?'
+    elif contact.nick == master_qq_name:
         # print('master~')
         nickname = 'master'
     else:
@@ -199,10 +206,13 @@ if ani_post:
 if __name__ == "__main__":
 
         try:
-            master_qq = fconf.master_qq
+            #master_qq = fconf.master_qq
             nict_dict = fconf.nick_dict
-            group_qq = fconf.group_qq
-            my_members = fconf.my_members
+            #group_qq = fconf.group_qq
+            #my_members = fconf.my_members
+            master_qq_name = fconf.master_qq_name
+            my_members_name = fconf.my_members_nick
+            group_name = fconf.group_name
 
             last_post_time = 0
             last_reply = ''

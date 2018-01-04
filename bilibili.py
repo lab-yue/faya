@@ -74,4 +74,4 @@ def get_bilibili(av_id):
         return msgbk
 
 if __name__=="__main__":
-    print(get_pagelist())
+    print(get_bilibili_api('https://bangumi.bilibili.com/anime/22504'))
