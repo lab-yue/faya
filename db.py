@@ -23,7 +23,7 @@ class name(object):
             return self.__data
 
     def set(self, new_data):
-        if isinstance(data, dict):
+        if isinstance(new_data, dict):
             with open(self.__path, 'w') as file:
                 json.dump(new_data, file, ensure_ascii=False)
 

@@ -179,6 +179,7 @@ ani_post = db.name('bili').get()
 
 days, hours, minutes = [], [], []
 
+
 if ani_post:
     for each in ani_post:
         if ani_post[each]['day'] not in days:
@@ -193,7 +194,7 @@ if ani_post:
         now = datetime.now()
         weekday = datetime.weekday(datetime.now())
         global group_qq
-        gl = bot.List('group', 'qq=' + group_qq)
+        gl = bot.List('group', 'qq=' + group_name)
         if gl is not None:
             for group in gl:
                 key = str(weekday) + str(now.hour) + str(now.minute)

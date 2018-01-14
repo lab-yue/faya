@@ -429,6 +429,18 @@ def dummy():
             lastest = last.read()
     return f'~ 对象为 {lastest}'
 
+@action("unicodeDecode")
+def dummy(data):
+    print(type(data))
+    s =data.encode('utf-8')
+    return s.decode('unicode-escape')
+
+@action("unicodeEncode")
+def dummy(data):
+    print(type(data))
+    s =data.encode('unicode-escape')
+    return s.decode('utf-8')
+
 # bilibili
 import bilibili
 

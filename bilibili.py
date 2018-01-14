@@ -49,14 +49,16 @@ def add_bilibili(url):
 def get_bilibili_api(av_id):
 
 
-    parturl = 'http://bangumi.bilibili.com/jsonp/seasoninfo/%s.ver?callback=seasonListCallback&jsonp=jsonp&_='%av_id + str(time.time()*10000)
+    parturl = 'https://bangumi.bilibili.com/jsonp/seasoninfo/%s.ver?callback=seasonListCallback&jsonp=jsonp&_='%av_id + str(time.time()*10000)
     headers = {
 
         'Referer': 'http://bangumi.bilibili.com/anime/%s/'%av_id,
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
         'X - Requested - With': 'XMLHttpRequest'
     }
-    return json.loads(requests.get(parturl,headers = headers).text[19:-2])
+    rsp = requests.get(parturl,headers = headers).text[19:-2]
+    print(rsp)
+    return json.loads(rsp)
 
 def get_pagelist(av_id=16983061):
     headers = {'Origin': 'https://www.bilibili.com', 'Accept-Encoding': 'gzip, deflate, br', 'Accept-Language': 'zh-CN,zh;q=0.8,ja;q=0.6,en;q=0.4', 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36', 'Accept': 'application/json, text/javascript, */*; q=0.01', 'Referer': f'https://www.bilibili.com/video/av{av_id}/'}
@@ -74,4 +76,4 @@ def get_bilibili(av_id):
         return msgbk
 
 if __name__=="__main__":
-    print(get_bilibili_api('https://bangumi.bilibili.com/anime/22504'))
+    print(add_bilibili('https://bangumi.bilibili.com/anime/21719'))
