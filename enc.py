@@ -68,6 +68,7 @@ class Cipher(object):
         return md5.hexdigest()
 
 if __name__ == '__main__':
+    '''
     pvt = ''
     C = Cipher()
     t = C.encrypt("""
@@ -80,3 +81,6 @@ The apple tree ( Malus pumila , commonly and erroneously called Malus domestica 
     aes_key = C.key_decrypt(pvt, t['key'])
     print('aes_key:', aes_key)
     print(C.decrypt(aes_key, t['content']))
+'''
+    c = Cipher()
+    print(c.get_md5('MUSIC_U=255b19fea4bdec0a0011f855c3708e3e97b229707fccab67d74da902317635b4f866558227e6c3335d9bd72ef1abb9ea77749c2dda21047b').upper())

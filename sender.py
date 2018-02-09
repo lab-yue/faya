@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from sock import *
+import sock
 import db
 
 def send_wx(to_buddy_abb, msg):
@@ -10,8 +10,7 @@ def send_wx(to_buddy_abb, msg):
 
     if wx:
         #print(wx['wx'])
-        soc(wx['wx'] + '@@@' + msg, 'wx')
-
+        sock.send(wx['wx'] + '@@@' + msg, 'wx')
     else:
         return '联系人错误orz'
 

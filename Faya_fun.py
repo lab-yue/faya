@@ -343,7 +343,9 @@ def pop_roll(data, nickname):
 
 @action("wx")
 def dummy(data, nickname):
+    print('ok ok ok ok', data)
     import sender
+    print(nickname)
     if nickname == 'master':
         try_wx = data.split('.', 1)
         if len(try_wx) == 2:
@@ -431,13 +433,11 @@ def dummy():
 
 @action("unicodeDecode")
 def dummy(data):
-    print(type(data))
     s =data.encode('utf-8')
     return s.decode('unicode-escape')
 
 @action("unicodeEncode")
 def dummy(data):
-    print(type(data))
     s =data.encode('unicode-escape')
     return s.decode('utf-8')
 

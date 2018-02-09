@@ -2,45 +2,74 @@
 # -*- coding: utf-8 -*-
 
 import requests
-import re
+# import re
+
 
 def get_aqi(city='sh'):
-    cityname = city
 
     city_dict = {
-        'sh': 'shanghai',
-        'lz': 'lanzhou',
-        'nj': 'nanjing',
+        'sh': '1437',
+        'lz': '1405',
+        'nj': '1485',
+        'gz': '1449'
     }
 
-    if cityname in city_dict:
-        city = city_dict[cityname]
+    h = {'Accept-Encoding': 'gzip, deflate, br', 'Accept-Language': 'zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7',
+         'Upgrade-Insecure-Requests': '1',
+         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36',
+         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+         'Cache-Control': 'max-age=0', 'Connection': 'keep-alive'}
+
+    if city in city_dict:
+        cityidx = city_dict[city]
     else:
+        # city = city
         return '尚不支持此keyword'
+    '''
     now = requests.get(f'http://www.86pm25.com/city/{city}.html').text  # headers = headers
     aqi_re = re.compile('var idx = "([0-9]+?)"')
     aqi = re.findall(aqi_re,now)
-    try:
-        aqi = int(aqi[0])
+    '''
+    now = requests.get(f'https://api.waqi.info/api/feed/@{cityidx}/now.json', headers=h).json()
+    print(now)
+    rxs = now.get('rxs', '')
+    aqi = 0
+    if rxs:
+        obs = rxs.get('obs', '')
+        if obs:
+            aqi = obs[0]['msg']['aqi']
+            try:
+                city_name = obs[0]['city']['name']
+            except KeyError:
+                city_name = obs[0]['msg']['city']['name']
+            finally:
+                pass
 
+    if aqi == '-':
+        return '无数据..'
+    else:
         if aqi < 50:
-            Level = 'Good'
+            level = 'Good'
         elif aqi < 100:
-            Level = 'Moderate'
+            level = 'Moderate'
         elif aqi < 150:
-            Level = 'Relaitvely Unhealthy'
+            level = 'Relaitvely Unhealthy'
         elif aqi < 200:
-            Level = 'Unhealthy'
+            level = 'Unhealthy'
         elif aqi < 300:
-            Level = 'Very Unhealthy'
+            level = 'Very Unhealthy'
         else:
-            Level = 'Hazardous'
+            level = 'Hazardous'
 
-        msg = f'现在{city}空气质量:\naqi: %s' % aqi  + '\n' + '评价: %s' % Level
+        msg = f'现在{city_name}空气质量:\naqi: %s' % aqi + '\n' + '评价: %s' % level
 
         return msg
-    except:
-        return 'oops 好像数据有问题'
 
-if __name__=="__main__":
+    # try:
+        # aqi = int(aqi[0])
+
+        # return 'oops 好像数据有问题'
+
+
+if __name__ == "__main__":
     print(get_aqi('lz'))

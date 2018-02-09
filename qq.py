@@ -38,7 +38,7 @@ def onQQMessage(bot, contact, member, content):
                 nickname = my_members_name[each]
             #else:
             #    nickname = '?'
-    elif contact.nick == master_qq_name:
+    elif contact.mark == master_qq_name:
         # print('master~')
         nickname = 'master'
     else:
@@ -139,7 +139,7 @@ def onExit(bot, code, reason, error):
 def clock(bot):
     nowhour = datetime.now().hour
     global group_qq
-    gl = bot.List('group', 'qq='+group_qq)
+    gl = bot.List('group', group_name)
     if gl is not None and (nowhour == 0 or nowhour >= 6):
         for group in gl:
             trd = '%s点了www' % nowhour
@@ -194,7 +194,7 @@ if ani_post:
         now = datetime.now()
         weekday = datetime.weekday(datetime.now())
         global group_qq
-        gl = bot.List('group', 'qq=' + group_name)
+        gl = bot.List('group', group_name)
         if gl is not None:
             for group in gl:
                 key = str(weekday) + str(now.hour) + str(now.minute)
