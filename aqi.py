@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import requests
+
+
 # import re
 
 
 def get_aqi(city='sh'):
-
     city_dict = {
         'sh': '1437',
         'lz': '1405',
@@ -38,6 +39,7 @@ def get_aqi(city='sh'):
         obs = rxs.get('obs', '')
         if obs:
             aqi = obs[0]['msg']['aqi']
+            update = obs[0]['msg']['time']['s']
             try:
                 city_name = obs[0]['city']['name']
             except KeyError:
@@ -61,15 +63,15 @@ def get_aqi(city='sh'):
         else:
             level = 'Hazardous'
 
-        msg = f'现在{city_name}空气质量:\naqi: %s' % aqi + '\n' + '评价: %s' % level
+        msg = f'''现在{city_name}空气质量:\naqi: {aqi}\n评价: {level}\n更新于 {update}'''
 
         return msg
 
-    # try:
+        # try:
         # aqi = int(aqi[0])
 
         # return 'oops 好像数据有问题'
 
 
 if __name__ == "__main__":
-    print(get_aqi('lz'))
+    print(get_aqi('gz'))
