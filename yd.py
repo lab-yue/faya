@@ -4,9 +4,11 @@
 import requests
 import yaml
 import re
+from Fconf import Conf
 
 def get_ydword(word):
 
+    #conf =  str(Conf.yd)
     with open('faya.yml','r') as yml:
         conf = yaml.load(yml)['yd']
 
@@ -65,5 +67,5 @@ def get_word(word, nation):
         return '**'
 
 if __name__=="__main__":
-    print(get_ydword('warspite'))
-    print(get_phon('but one man loved the sorrows of your changing face', 'us'))
+    print(get_ydword('hangar'))
+    #print(get_phon('but one man loved the sorrows of your changing face', 'us'))

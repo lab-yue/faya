@@ -6,7 +6,6 @@ from datetime import datetime
 
 
 class Pusher(object):
-
     def __init__(self):
 
         with open('faya.yml', 'r') as yml:
@@ -59,12 +58,13 @@ class Pusher(object):
         with open('README.md', 'r') as md:
             readme = md.read()
 
-        ver_info = '当前版本: '+self.__new_ver+' ♪'
+        ver_info = '当前版本: ' + self.__new_ver + ' ♪'
 
         new_readme = re.sub(ver_reg, ver_info, readme)
 
         with open('README.md', 'w') as md:
             md.write(new_readme)
+
 
 if __name__ == '__main__':
     pusher = Pusher()

@@ -22,6 +22,7 @@ def action(name):
     def decorator(f):
         _registered_actions[name] = f
         return f
+
     return decorator
 
 
@@ -36,12 +37,12 @@ def faya(data):
         reply = ['在', '你好呀', '( ´▽｀)']
         return reply[random.randint(0, 2)]
 
+
 # learn
 
 
 @action("learn")
 def learn(data, nickname):
-
     faya_dict = faya_db.get()
 
     if nickname != 'master':
@@ -55,7 +56,9 @@ def learn(data, nickname):
             faya_db.set(faya_dict)
             return '学会了！(ง •̀_•́)ง '
 
+
 import yd
+
 
 @action("us")
 def phon(data):
@@ -72,10 +75,12 @@ def dummy(data):
     if data:
         return yd.get_ydword(data)
 
+
 @action("rss")
 def dummy():
     import rss
     return rss.check()
+
 
 # @action("+")
 # def phon(data):
@@ -85,7 +90,6 @@ def dummy():
 
 @action("unlearn")
 def popmark(data, nickname):
-
     faya_dict = faya_db.get()
 
     if nickname != 'master':
@@ -97,6 +101,7 @@ def popmark(data, nickname):
             faya_dict.pop(data)
             faya_db.set(faya_dict)
             return '已忘记。'
+
 
 # blur learn
 
@@ -131,8 +136,13 @@ def popmark(data, nickname):
             faya_db_b.set(blur)
             return '已忘记。'
 
+
 # len
 
+@action("pixiv")
+def dummy():
+    import pixiv_daily
+    return pixiv_daily.get()
 
 @action("len")
 def show_len(data):
@@ -144,20 +154,22 @@ def couplet(data):
     import duilian
     return duilian.duilian(data)
 
+
 # shijing
 
 
 @action("poem")
 def give_poem():
     poems = db.name('sj').get()
-    poem = list(poems)[random.randint(0, len(poems)-1)]
+    poem = list(poems)[random.randint(0, len(poems) - 1)]
     return poem + '\n' + poems[poem].replace('。', '。\n').replace('？', '？\n').replace('！', '！\n').replace('；', '；\n')
+
 
 @action("mzd")
 def dummy():
     red = db.name('red').get()
     red.pop('now')
-    red_key = list(red)[random.randint(0, len(red)-1)]
+    red_key = list(red)[random.randint(0, len(red) - 1)]
     push = '毛泽东语录: \n\n' + red[red_key]['p']
     if red[red_key]['from']:
         push += '\n   -' + red[red_key]['from']
@@ -189,6 +201,7 @@ def cal(data):
             except BaseException:
                 return '输入算式有误'
 
+
 # jp
 
 
@@ -198,6 +211,7 @@ def dummy(data):
     return web_jp.get_jp(data)
     # return '由于GFW日语字典暂时不能用'#get_jp(data)
 
+
 @action("wiki")
 def dummy(data):
     if data:
@@ -206,21 +220,23 @@ def dummy(data):
         # s =  subprocess.Popen(f'sudo proxychains4 python3.6 wiki.py {wiki_key}',stdout=subprocess.PIPE, close_fds=True)
         # stdoutdata, stderrdata = s.communicate()
         import la_eric
-        return la_eric.get('?key='+wiki_key)
+        return la_eric.get('?key=' + wiki_key)
 
-    # return '由于GFW日语字典暂时不能用'#get_jp(data)
+        # return '由于GFW日语字典暂时不能用'#get_jp(data)
+
 
 @action("md5")
 def dummy(data):
     if data:
         import enc
         return enc.Cipher().get_md5(data)
+
+
 # mark
 
 
 @action("mark")
 def mark(data, nickname):
-
     to_mark = data.split(' ', 1)
 
     marked = db.name(nickname)
@@ -251,7 +267,6 @@ def mark(data, nickname):
 
 @action("popmark")
 def popmark(data, nickname):
-
     marked = db.name(nickname)
 
     marked_dict = marked.get()
@@ -288,6 +303,7 @@ def roll_someting(data, nickname):
     else:
 
         return str(random.randint(0, 100))
+
 
 '''
 @action("addroll")
@@ -338,6 +354,7 @@ def pop_roll(data, nickname):
                 return '这家店不在列表里'
 '''
 
+
 # wx
 
 
@@ -361,6 +378,7 @@ def dummy(data, nickname):
                 return '暂时不能发别人'
         else:
             return 'wx格式有误'
+
 
 import sys
 
@@ -386,6 +404,7 @@ def dummy(data, nickname):
         msg = f'from {nickname} {app}：{data}'
         sock.send(msg, 'line')
         return 'faya已转发至line'
+
 
 # ～
 '''
@@ -428,25 +447,30 @@ def wxrp(data, nickname):
 @action("~?")
 def dummy():
     with open('wx.txt', 'r') as last:
-            lastest = last.read()
+        lastest = last.read()
     return f'~ 对象为 {lastest}'
+
 
 @action("unicodeDecode")
 def dummy(data):
-    s =data.encode('utf-8')
+    s = data.encode('utf-8')
     return s.decode('unicode-escape')
+
 
 @action("unicodeEncode")
 def dummy(data):
-    s =data.encode('unicode-escape')
+    s = data.encode('unicode-escape')
     return s.decode('utf-8')
+
 
 # bilibili
 import bilibili
 
+
 @action("list")
 def get_bilibili(data):
     return bilibili.get_bilibili(data)
+
 
 # bilibili
 
@@ -460,6 +484,7 @@ def follow_bilibili(data):
 def up():
     msg = bilibili.get_pagelist()
     return msg
+
 
 # aqi
 
@@ -476,10 +501,10 @@ def dummy(data):
 # weather
 import weather
 
+
 @action("tq")
 def tq():
     return weather.get_weather()
-
 
 
 # ox dict
@@ -490,6 +515,7 @@ def dummy(data):
     if data:
         import ox
         return ox.get_oxword(data)
+
 
 @action("snm")
 def dummy(data):
@@ -504,6 +530,7 @@ def dummy(data):
 def xr(data):
     import currency
     return currency.exchange(data)
+
 
 # mh
 
@@ -552,7 +579,6 @@ def dummy(data):
 
 
 def do_action(action_name, data, nickname, contact):
-
     parameter = {
         'data': data,
         'nickname': nickname,
@@ -573,7 +599,6 @@ def do_action(action_name, data, nickname, contact):
 
 
 def simple_if(nickname, content):
-
     faya_reply = 0
 
     import timerOOP
@@ -629,7 +654,7 @@ def simple_if(nickname, content):
         if 'ゆい' not in is_jp[0]:
             faya_reply = 'xds日语真好'
 
-    if ('欧拉'in content) or ('無駄' in content):
+    if ('欧拉' in content) or ('無駄' in content):
         if not content.replace('欧拉', '').replace('無駄', ''):
             ola_tmp = content.replace('欧拉', 'a')
             muda_tmp = ola_tmp.replace('無駄', '欧拉')
@@ -642,7 +667,6 @@ def simple_if(nickname, content):
 
 
 def scenario(nickname, content, contact):
-
     func_name, parameters = 0, 0
 
     if ' ' in content:
@@ -660,7 +684,6 @@ def scenario(nickname, content, contact):
             func_name = alter_dict[func_name + '_alt']
 
     if func_name in _registered_actions:
-
         return do_action(func_name, parameters, nickname, contact)
 
     faya_dict = faya_db.get()
@@ -680,6 +703,7 @@ def scenario(nickname, content, contact):
         return if_way
     else:
         return 0
+
 
 if __name__ == "__main__":
     print(scenario('haru', 'wiki American', 'somebody'))

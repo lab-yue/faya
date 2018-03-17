@@ -74,4 +74,4 @@ def get_aqi(city='sh'):
 
 
 if __name__ == "__main__":
-    print(get_aqi('gz'))
+    print(get_aqi('sh'))

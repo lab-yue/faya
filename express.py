@@ -21,11 +21,11 @@ def get_express(postID):
         'X-Requested-With': 'XMLHttpRequest', 'Connection': 'keep-alive'}
 
     cookies = {
-        'Hm_lvt_39418dcb8e053c84230016438f4ac86c': '1510225235, 1510226879',
-        'Hm_lpvt_39418dcb8e053c84230016438f4ac86c': '1510227988'
+        'Hm_lvt_39418dcb8e053c84230016438f4ac86c': '0',
+        'Hm_lpvt_39418dcb8e053c84230016438f4ac86c': '-1'
     }
 
-    data1 = requests.get(f'https://www.kuaidi100.com/autonumber/autoComNum?resultv2=1&text={data}', headers=headers1,
+    data1 = requests.get(f'https://www.kuaidi100.com/autonumber/autoComNum?resultv2=1&text={postID}', headers=headers1,
                          cookies=cookies).json()
     postData = data1.get('auto', '')
     if postData:
@@ -40,12 +40,13 @@ def get_express(postID):
     if not data2:
         return '运单号错了或者暂无数据(´-ω-`)'
 
-    msg = f'{postType}运输 最近更新:\n'
+    msg = ''
 
-    for port in data2[-3:]:
-        msg += '时间: ' + port['time'] + '\n信息: ' + port['context'] + '\n'
+    for port in data2[:3]:
+        msg = '时间: ' + port['time'] + '\n信息: ' + port['context'] + '\n' + msg
+    msg = f'{postType}运输 最近更新:\n' + msg
     return msg
 
 
 if __name__ == '__main__':
-    print(get_express('630302378012'))
+    print(get_express('63030200378012'))
