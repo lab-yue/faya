@@ -9,9 +9,9 @@ not
 private.py
 faya.yml
 test.py
-Fconf.py
 
 #sys:
+*.pyc
 
 ghostdriver.log
 .idea
