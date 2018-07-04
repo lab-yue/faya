@@ -1,28 +1,24 @@
 from lxml import html
 import requests
 from pyquery import PyQuery
-from guess_language import guess_language
 import re
 import sys
-
 
 
 def get(key):
     try:
 
-        en_reg = re.compile('[a-zA-Z]')
         jp_reg = re.compile('[ぁ-んァ-ヶ]')
+        en_reg = re.compile('[a-zA-Z]')
 
-        language = ''
+        language = 'zh'
 
-        if re.findall(en_reg, key):
-            language = 'en'
-        if re.findall(jp_reg,key):
+        if re.findall(jp_reg, key):
             language = 'ja'
-        if not language:
-            language = guess_language(key)
+        elif re.findall(en_reg, key):
+            language = 'en'
 
-        print('来自 '+language+' wiki')
+        print('from ' + language + '.wiki')
 
         headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36',
@@ -35,18 +31,18 @@ def get(key):
         s = requests.session()
         s.keep_alive = False
 
-        page = s.get(f'https://{language}.wikipedia.org/wiki/{key}',headers=headers)
-        #print(f'https://{language}.wikipedia.org/wiki/{key}')
+        page = s.get(f'https://{language}.wikipedia.org/wiki/{key}', headers=headers)
+        # print(f'https://{language}.wikipedia.org/wiki/{key}')
         page.encoding = 'UTF-8'
-        print(page.text)
+        # print(page.text)
         tree = html.fromstring(page.text)
-        #print(html.tostring(tree, encoding='UTF-8'))
+        # print(html.tostring(tree, encoding='UTF-8'))
         p1 = tree.xpath('//*[@id="mw-content-text"]/div/p[1]')
         if not p1:
             return f'wiki里查不到 {key}'
         p1_text = html.tostring(p1[0], encoding='UTF-8')
         de = PyQuery(p1_text.decode('UTF-8')).text()
-        if ('refer'in de) or ('可指'in de):
+        if ('refer' in de) or ('可指' in de):
             refer = tree.xpath('//*[@id="mw-content-text"]/div/ul[1]/li')
             for each in refer:
                 refer_text = html.tostring(each, encoding='UTF-8')
@@ -57,6 +53,7 @@ def get(key):
     except Exception as e:
         return f'似乎有些问题:\n{e}'
 
+
 if __name__ == '__main__':
-    get('衣服')
-    #print(get(sys.argv[1]))
+    print(get('apple'))
+    # print(get(sys.argv[1]))

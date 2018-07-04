@@ -5,7 +5,7 @@ import inspect
 import os
 import random
 import re
-import lib.simple as lib
+import main_lib.simple as lib
 from core import db, enc, sock, sender
 from core.Fconf import config
 
@@ -170,7 +170,7 @@ def dummy(data):
     if data:
         # import subprocess
         wiki_key = data.replace(' ', '_')
-        # s =  subprocess.Popen(f'sudo proxychains4 python3.6 wiki.py {wiki_key}',stdout=subprocess.PIPE, close_fds=True)
+        # s =  subprocess.Popen(f'sudo proxychains4 python3.6 __wiki.py {wiki_key}',stdout=subprocess.PIPE, close_fds=True)
         # stdoutdata, stderrdata = s.communicate()
         import la_eric
         return la_eric.get('?key=' + wiki_key)
@@ -311,7 +311,6 @@ def pop_roll(data, nickname):
 
 @action("wx")
 def dummy(data, nickname):
-    print('ok ok ok ok', data)
     print(nickname)
     if nickname == 'master':
         try_wx = data.split('.', 1)
@@ -413,7 +412,7 @@ def dummy(data):
 
 
 # bilibili
-from lib.more import bilibili, yd
+from main_lib.more import bilibili, yd
 
 
 @action("list")
@@ -437,13 +436,13 @@ def up():
 
 @action("xr")
 def xr(data):
-    from lib.more import currency
+    from main_lib.more import currency
     return currency.exchange(data)
 
 
 # mh
 '''  
-from lib.need_update import faya_mh
+from main_lib.need_update import faya_mh
 
 
 @action("alter")
@@ -600,4 +599,4 @@ def scenario(nickname, content, contact):
         return 0
 
 if __name__ == "__main__":
-    print(scenario('haru', '? sad', 'somebody'))
+    print(scenario('haru', 'unicodeDecode s7\x007\x9c\x90r\x02\x8cb\x02\xe3n', 'somebody'))

@@ -9,9 +9,15 @@ not
 private.py
 faya.yml
 test.py
+test
 
 #sys:
 *.pyc
+
+#publish
+faya.egg-info
+build
+dist
 
 ghostdriver.log
 .idea

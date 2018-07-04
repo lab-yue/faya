@@ -13,8 +13,8 @@ import main
 import private
 from core import db
 from core.Fconf import config
-from lib.more import bilibili, wyy
-from lib.simple import aqi, weather
+from main_lib.more import bilibili, wyy
+from main_lib.simple import aqi, weather
 
 
 @qqbotslot

@@ -23,7 +23,7 @@ def get(func_name):
 
 for _ in simple_function_dict:
     f = simple_function_dict[_]
-    function_dict[_] = importlib.import_module('lib.simple.' + f)
+    function_dict[_] = importlib.import_module('main_lib.simple.' + f)
 
 if __name__ == '__main__':
-    print(get('tq')())
+    print(get('?jp')('眠い'))

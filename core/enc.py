@@ -7,7 +7,7 @@ from base64 import b64decode, encodebytes, decodebytes
 from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
 
-from core.Fconf import config
+#from core.Fconf import config
 
 
 class Cipher(object):
@@ -70,18 +70,12 @@ class Cipher(object):
         return md5.hexdigest()
 
 if __name__ == '__main__':
-    '''
-    pvt = ''
-    C = Cipher()
-    t = C.encrypt("""
-来自 en.wiki
-The apple tree ( Malus pumila , commonly and erroneously called Malus domestica ) is a deciduous tree
-    """)
 
-    print(t)
+    v = 'IzqXrmlvNeTr0D1XcQPE09xivBGjVlgsAfeZ9Cd2P/qp7owBiKM+2l1rWx3Y0nbQoF8htiUpFP/WMo1qW2Y49pNo5FJ331N2A/3JAsAdNRAiL+YH5zfb2l23pwvQjBLJaB3Iv3DveMsM4aihw4670g=='
+    k = '0beb74e4e93fad8c'
 
-    aes_key = C.key_decrypt(pvt, t['key'])
-    print('aes_key:', aes_key)
-    print(C.decrypt(aes_key, t['content']))
-'''
-    pass
+    c = Cipher()
+
+    #a = c.decrypt(key=k,text=v)
+    import random
+    print(c.get_md5('123'))

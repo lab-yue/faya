@@ -7,7 +7,6 @@ from core.Fconf import config
 
 def get(word):
     try:
-
         app_id = config.ox['app_id']
         app_key = config.ox['app_key']
     except KeyError:
@@ -37,4 +36,4 @@ def get(word):
             #print('examples:' + each['examples'][0]['text'])
 
 if __name__=="__main__":
-    print(get('nice'))
+    print(get('agape'))
